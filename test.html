@@ -3,53 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map with overlayed areas</title>
+    <title>Price Calculator</title>
+    <!-- link font resources -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
     <style>
-		.cologne {
+		.cologne-map {
+			margin: 0;
+			padding: 0;
             display: flex;
 			position: absolute;
-			<!-- MANUALLY ADJUST POSITION HERE: -->
-			<!--left: -300px;-->
-			<!--top: -10px;-->
-			transform: scale(0.75);
+			/* MANUALLY ADJUST POSITION HERE: -->
+				left: -300px;-->
+				top: -10px;-->
+			*/
+			transform: scale(1.0);
 		}
-		.cologne img {
+		.cologne-map img {
 			position: static;
-			pointer-events: none
+			pointer-events: none;
 		}
-		.cologne svg {
+		.cologne-map svg {
 			position: absolute;
+		}
+		.price-calculator-table {
+		  font-family: "Manrope", sans-serif;
+		  border-collapse: collapse;
+		  table-layout: fixed;
+		  width: 1000px;
+		}
+		td, th {
+		  border: 1px solid rgb(52, 54, 103);
+		  text-align: left;
+		  padding: 10px;
+		  height: 25px;
+		}
+		/* 
+		td:nth-child(1), th:nth-child(1) {
+			background-color: rgba(255, 233, 127, 0.5);
+		}
+		td:nth-child(2), th:nth-child(2) {
+			background-color: rgba(255, 127, 127, 0.5);
+		}
+		td:nth-child(3), th:nth-child(3) {
+			background-color: rgba(52, 54, 103, 0.5);
+		}*/
+		th:nth-child(1), th:nth-child(2), th:nth-child(3) {
+			background-color: rgba(52, 54, 103, 0.5);
 		}
     </style>
 </head>
 
 <body>
+	<table class="price-calculator-table">
+	  <tr>
+		<th>Origin</th>
+		<th>Destination</th>
+		<th>Price</th>
+	  </tr>
+	  <tr>
+		<td id="table-origin"></td>
+		<td id="table-destination"></td>
+		<td id="table-price"></td>
+	  </tr>
+	</table><br>
     <var id="highlightedArea"></var>
     <var id="senderArea"></var>
     <var id="receiverArea"></var>
-	<div class="cologne">
+	<div class="cologne-map">
 		<svg viewBox="0 0 1000 733">
-			<polygon opacity="0" points="366,422 369,400 374,381 381,366 389,352 397,340 408,328 425,313 478,359 464,372 458,379 451,391 446,405 443,421" class="ehrenfeld"/>
+			<polygon opacity="0" points="366,422 369,400 374,381 381,366 389,352 397,340 408,328 425,313 478,359 464,372 458,379 451,391 446,405 443,421" class="Ehrenfeld"/>
+			<polygon opacity="0" points="590,352 609,363 620,373 632,387 639,400 643,414 645,430 643,449 638,463 630,476 621,487 609,497 594,506 576,513 587,357" class="Deutz"/>
 			<polygon opacity="0" points="528,188 529,88 555,90 579,95 602,101 626,109 645,118 666,129 643,213 622,204 599,197 576,192 544,188" class="merkenich"/>
 		</svg>
-		<img src="C:\Users\afernandez\Desktop\syndiMap\resources\syndi.jpg" alt="Cologne Map">
+		<img src=".\resources\syndi.jpg" alt="Cologne Map">
 	</div>
 </body>
 
 <script>
-	const areaNames = ["ehrenfeld", "merkenich", "none"];	
+	const pricesMap = new Map([["Ehrenfeld::Ehrenfeld", "14€"],
+							   ["Ehrenfeld::Deutz", "18.5€"],
+							   ["Deutz::Deutz", "14.5€"],
+							   ["Deutz::Ehrenfeld", "18.5€"]]);
+	const areaNames = ["Ehrenfeld", "Deutz", "None"];	
 	senderArea = document.getElementById('senderArea');
-	senderArea.value = "none";
+	senderArea.value = "None";
 	receiverArea = document.getElementById('receiverArea');
-	receiverArea.value = "none";
+	receiverArea.value = "None";
 	highlightedArea = document.getElementById('highlightedArea');
-	highlightedArea.value = "none";	
-	areaNames.forEach(function(areaName) {
+	highlightedArea.value = "None";	
+	areaNames.forEach((areaName) => {
 		var area = document.querySelector('.' + areaName);
 		if (area == null) {
 			return;
 		}
 		area.addEventListener('mouseenter', () => {
+			console.log("hola");
+			<!-- highlight area -->
 			if (senderArea.value == areaName || receiverArea.value == areaName) {
 				return;
 			}
@@ -62,40 +113,68 @@
 				return;
 			}
 			area.style.opacity = 0;
-			highlightedArea.value = "none";
+			highlightedArea.value = "None";
 		});
 		area.addEventListener('click', () => {
-			if (senderArea.value != "none" && receiverArea.value != "none") {
+			if (senderArea.value != "None" && receiverArea.value != "None") {
 				if (receiverArea.value == areaName) {
 					<!-- unset receiver -->
 					area.style.opacity = 0.0;
-					receiverArea.value = "none";
+					receiverArea.value = "None";
+					document.getElementById("table-destination").innerHTML = "";
+					document.getElementById("table-price").innerHTML = "";
+				document.getElementById("table-destination").style.backgroundColor = "";
+				document.getElementById("table-price").style.backgroundColor = "";
 					return;
 				} 
 				<!-- unset sender and receiver -->
 				document.querySelector('.' + senderArea.value).style.opacity = 0.0;
 				document.querySelector('.' + receiverArea.value).style.opacity = 0.0;
-				senderArea.value = "none";
-				receiverArea.value = "none";
+				senderArea.value = "None";
+				receiverArea.value = "None";
+				document.getElementById("table-origin").innerHTML = "";
+				document.getElementById("table-destination").innerHTML = "";
+				document.getElementById("table-price").innerHTML = "";	
+				document.getElementById("table-destination").style.backgroundColor = "";
+				document.getElementById("table-origin").style.backgroundColor = "";
+				document.getElementById("table-price").style.backgroundColor = "";
 				return;
 			}
 			else if (senderArea.value == areaName) {
 				<!-- unset sender -->
 				area.style.opacity = 0.0;
-				senderArea.value = "none";
+				senderArea.value = "None";
+				document.getElementById("table-origin").innerHTML = "";
+				document.getElementById("table-origin").style.backgroundColor = "";
+				document.getElementById("table-destination").innerHTML = "";
+				document.getElementById("table-destination").style.backgroundColor = "";
+				document.getElementById("table-price").innerHTML = "";
+				document.getElementById("table-price").style.backgroundColor = "";
 				return;
 			}
-			else if (senderArea.value == "none") {
+			else if (senderArea.value == "None") {
 				<!-- set sender -->
 				area.style.fill = "rgb(255, 233, 127)";
 				area.style.opacity = .5;
 				senderArea.value = areaName;
+				document.getElementById("table-origin").innerHTML = areaName;
+				document.getElementById("table-origin").style.backgroundColor = "rgba(255, 233, 127, 0.5)";
+				document.getElementById("table-destination").innerHTML = areaName;
+				document.getElementById("table-destination").style.backgroundColor = "rgba(255, 233, 127, 0.5)";
+				document.getElementById("table-price").innerHTML 
+					= pricesMap.get(areaName + "::" + areaName);
+				document.getElementById("table-price").style.backgroundColor = "rgba(52, 54, 103, 0.5)";			
 				return;
 			}
 			<!-- set receiver -->
 			area.style.fill = "rgb(255, 127, 127)";
 			area.style.opacity = .5;
 			receiverArea.value = areaName;
+			document.getElementById("table-destination").innerHTML = areaName;
+			document.getElementById("table-destination").style.backgroundColor = "rgba(255, 127, 127, 0.5)";
+			document.getElementById("table-price").innerHTML
+				= pricesMap.get(senderArea.value + "::" + areaName);
+			document.getElementById("table-price").style.backgroundColor = "rgba(52, 54, 103, 0.5)";
 		});
 	});
 </script>
