@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hover Polygon to Display Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+		    top: 0.0;
+		    left: 0.0;
+            transform: scale(1.00);
+            max-width: 1000px;
+            max-height: 735.2px;
+        }
+		background-image {
+            position: absolute;
+            display: block;
+			pointer-events: none;
+			z-index: 1;
+        }
+        .background-image img {
+            max-width: 1000px;
+            max-height: 1000px;
+        }
+        .hover-image {
+            position: relative;
+            display: none;
+			pointer-events: none;
+			top: -735.2px;
+        }
+        .hover-image img {
+            max-width: 1000px;
+            max-height: 735.2px;
+        }		
+		.img-overlay-wrap {
+		  position: relative;
+		  display: inline-block;
+		}
+		.img-overlay-wrap img {
+           max-width: 1000px;
+           max-height: 1000px;
+		   pointer-events: none
+		}
+		.img-overlay-wrap svg {
+		  position: absolute;
+          max-width: 1000px;
+          max-height: 735.2px;
+		}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Image to display -->
+		<div class="img-overlay-wrap">
+			<svg viewBox="0 0 1000 732.5" fill-opacity="0.2">
+			<!-- SVG with a polygon -->
+				<polygon points="367,420 383,363 424,314 476,359 452,386 442,420" class="hover-polygon"/>
+			</svg>
+			<img src="C:\Users\afernandez\Desktop\syndiMap\resources\syndi.jpg" alt="Background Image">
+			<img src="C:\Users\afernandez\Desktop\syndiMap\resources\fromEhrenfeld.png" alt="Hovered Image" class="hover-image">
+		</div>
+</div>
+<script>
+    const polygon = document.querySelector('.hover-polygon');
+    const hoverImage = document.querySelector('.hover-image');
+    polygon.addEventListener('mouseenter', () => {
+        hoverImage.style.display = 'block';
+    });
+    polygon.addEventListener('mouseleave', () => {
+        hoverImage.style.display = 'none';
+    });
+</script>
+
+</body>
+</html>
