@@ -3,80 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hover Polygon to Display Image</title>
+    <title>Map with overlayed areas</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+		.cologne {
             display: flex;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
-		    top: 0.0;
-		    left: 0.0;
-            transform: scale(1.00);
-            max-width: 1000px;
-            max-height: 735.2px;
-        }
-		background-image {
-            position: absolute;
-            display: block;
-			pointer-events: none;
-			z-index: 1;
-        }
-        .background-image img {
-            max-width: 1000px;
-            max-height: 1000px;
-        }
-        .hover-image {
-            position: relative;
-            display: none;
-			pointer-events: none;
-			top: -735.2px;
-        }
-        .hover-image img {
-            max-width: 1000px;
-            max-height: 735.2px;
-        }		
-		.img-overlay-wrap {
-		  position: relative;
-		  display: inline-block;
+			position: absolute;
+			<!-- MANUALLY ADJUST POSITION HERE: -->
+			<!--left: -300px;-->
+			<!--top: -10px;-->
+			transform: scale(0.75);
 		}
-		.img-overlay-wrap img {
-           max-width: 1000px;
-           max-height: 1000px;
-		   pointer-events: none
+		.cologne img {
+			position: static;
+			pointer-events: none
 		}
-		.img-overlay-wrap svg {
-		  position: absolute;
-          max-width: 1000px;
-          max-height: 735.2px;
+		.cologne svg {
+			position: absolute;
 		}
     </style>
 </head>
-<body>
 
-<div class="container">
-    <!-- Image to display -->
-		<div class="img-overlay-wrap">
-			<svg viewBox="0 0 1000 732.5" fill-opacity="0.2">
-			<!-- SVG with a polygon -->
-				<polygon points="367,420 383,363 424,314 476,359 452,386 442,420" class="hover-polygon"/>
-			</svg>
-			<img src="C:\Users\afernandez\Desktop\syndiMap\resources\syndi.jpg" alt="Background Image">
-			<img src="C:\Users\afernandez\Desktop\syndiMap\resources\fromEhrenfeld.png" alt="Hovered Image" class="hover-image">
-		</div>
-</div>
+<body>
+	<div class="cologne">
+		<svg viewBox="0 0 1000 733">
+			<polygon opacity="0" points="367,421 369,400 375,381 381,366 389,352 398,340 409,328 425,314 477,359 464,372 455,383 449,396 445,408 442,421" class="ehrenfeld"/>
+			<polygon opacity="0" points="528,186 529,89 599,100 664,129 642,212 587,193" class="merkenich"/>
+		</svg>
+		<img src="C:\Users\afernandez\Desktop\syndiMap\resources\syndi.jpg" alt="Cologne Map">
+	</div>
+</body>
+
 <script>
-    const polygon = document.querySelector('.hover-polygon');
-    const hoverImage = document.querySelector('.hover-image');
-    polygon.addEventListener('mouseenter', () => {
-        hoverImage.style.display = 'block';
+    const ehrenfeld = document.querySelector('.ehrenfeld');
+    ehrenfeld.addEventListener('mouseenter', () => {
+		ehrenfeld.style.fill = "rgb(52, 54, 103)";
+		ehrenfeld.style.opacity = .5;
     });
-    polygon.addEventListener('mouseleave', () => {
-        hoverImage.style.display = 'none';
+    ehrenfeld.addEventListener('mouseleave', () => {
+		ehrenfeld.style.opacity = 0;
+    });
+    const merkenich = document.querySelector('.merkenich');
+    merkenich.addEventListener('mouseenter', () => {
+		merkenich.style.fill = "rgb(52, 54, 103)";
+		merkenich.style.opacity = .5;
+    });
+    merkenich.addEventListener('mouseleave', () => {
+		merkenich.style.opacity = 0;
     });
 </script>
-
-</body>
 </html>
