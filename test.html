@@ -24,31 +24,79 @@
 </head>
 
 <body>
+    <var id="highlightedArea"></var>
+    <var id="senderArea"></var>
+    <var id="receiverArea"></var>
 	<div class="cologne">
 		<svg viewBox="0 0 1000 733">
-			<polygon opacity="0" points="367,421 369,400 375,381 381,366 389,352 398,340 409,328 425,314 477,359 464,372 455,383 449,396 445,408 442,421" class="ehrenfeld"/>
-			<polygon opacity="0" points="528,186 529,89 599,100 664,129 642,212 587,193" class="merkenich"/>
+			<polygon opacity="0" points="366,422 369,400 374,381 381,366 389,352 397,340 408,328 425,313 478,359 464,372 458,379 451,391 446,405 443,421" class="ehrenfeld"/>
+			<polygon opacity="0" points="528,188 529,88 555,90 579,95 602,101 626,109 645,118 666,129 643,213 622,204 599,197 576,192 544,188" class="merkenich"/>
 		</svg>
 		<img src="C:\Users\afernandez\Desktop\syndiMap\resources\syndi.jpg" alt="Cologne Map">
 	</div>
 </body>
 
 <script>
-    const ehrenfeld = document.querySelector('.ehrenfeld');
-    ehrenfeld.addEventListener('mouseenter', () => {
-		ehrenfeld.style.fill = "rgb(52, 54, 103)";
-		ehrenfeld.style.opacity = .5;
-    });
-    ehrenfeld.addEventListener('mouseleave', () => {
-		ehrenfeld.style.opacity = 0;
-    });
-    const merkenich = document.querySelector('.merkenich');
-    merkenich.addEventListener('mouseenter', () => {
-		merkenich.style.fill = "rgb(52, 54, 103)";
-		merkenich.style.opacity = .5;
-    });
-    merkenich.addEventListener('mouseleave', () => {
-		merkenich.style.opacity = 0;
-    });
+	const areaNames = ["ehrenfeld", "merkenich", "none"];	
+	senderArea = document.getElementById('senderArea');
+	senderArea.value = "none";
+	receiverArea = document.getElementById('receiverArea');
+	receiverArea.value = "none";
+	highlightedArea = document.getElementById('highlightedArea');
+	highlightedArea.value = "none";	
+	areaNames.forEach(function(areaName) {
+		var area = document.querySelector('.' + areaName);
+		if (area == null) {
+			return;
+		}
+		area.addEventListener('mouseenter', () => {
+			if (senderArea.value == areaName || receiverArea.value == areaName) {
+				return;
+			}
+			area.style.fill = "rgb(52, 54, 103)";
+			area.style.opacity = .5;
+			highlightedArea.value = areaName;		
+		});	
+		area.addEventListener('mouseleave', () => {
+			if (senderArea.value == areaName || receiverArea.value == areaName) {
+				return;
+			}
+			area.style.opacity = 0;
+			highlightedArea.value = "none";
+		});
+		area.addEventListener('click', () => {
+			if (senderArea.value != "none" && receiverArea.value != "none") {
+				if (receiverArea.value == areaName) {
+					<!-- unset receiver -->
+					area.style.opacity = 0.0;
+					receiverArea.value = "none";
+					return;
+				} 
+				<!-- unset sender and receiver -->
+				document.querySelector('.' + senderArea.value).style.opacity = 0.0;
+				document.querySelector('.' + receiverArea.value).style.opacity = 0.0;
+				senderArea.value = "none";
+				receiverArea.value = "none";
+				return;
+			}
+			else if (senderArea.value == areaName) {
+				<!-- unset sender -->
+				area.style.opacity = 0.0;
+				senderArea.value = "none";
+				return;
+			}
+			else if (senderArea.value == "none") {
+				<!-- set sender -->
+				area.style.fill = "rgb(255, 233, 127)";
+				area.style.opacity = .5;
+				senderArea.value = areaName;
+				return;
+			}
+			<!-- set receiver -->
+			area.style.fill = "rgb(255, 127, 127)";
+			area.style.opacity = .5;
+			receiverArea.value = areaName;
+		});
+	});
 </script>
 </html>
