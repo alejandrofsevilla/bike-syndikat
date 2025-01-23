@@ -8,48 +8,48 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
-        <style>
-            .cologne-map {
+	</head>
+    <div class="map-container" style="height:775px">	
+		<style>
+			.cologne-map {
 				display: flex;
 				position: absolute;
-				transform: scale(0.75);
+				transform: scale(0.9);
 				transform-origin: top left;
-            }
-            .cologne-map img {
+			}
+			.cologne-map img {
 				pointer-events: none;
 				position: top;
-            }
-            .cologne-map svg {
+			}
+			.cologne-map svg {
 				position: absolute;
-            }
-            .price-calculator-table {
+			}
+			.price-calculator-table {
 				font-family: "Manrope", sans-serif;
 				font-size: 14px;
 				border-collapse: collapse;
 				table-layout: fixed;
-				width: 750px;
+				width: 900px;
 				padding: 0px;
 				position: left;
-            }
-            td, th {
+			}
+			td, th {
 				border: 3px solid rgb(238,236,239);
 				text-align: left;
 				padding: 10px;
 				height: 20px;
-            }
-            td:nth-child(1), td:nth-child(2), td:nth-child(3){
+			}
+			td:nth-child(1), td:nth-child(2), td:nth-child(3){
 				background-color: rgba(52, 54, 103, 0.5);
-            }
-            td:nth-child(3){
+			}
+			td:nth-child(3){
 				font-weight: bold;
 				font-style: italic;
-            }
-            th:nth-child(1), th:nth-child(2), th:nth-child(3) {
+			}
+			th:nth-child(1), th:nth-child(2), th:nth-child(3) {
 				background-color: rgba(52, 54, 103, 0.5);
-            }
-        </style>
-    </head>
-    <body>
+			}
+		</style>
         <table class="price-calculator-table">
             <tr>
                 <th><i>Absender</i></th>
@@ -62,6 +62,7 @@
                 <td id="table-price"></td>
             </tr>
         </table>
+        </table>
         <var id="highlightedArea"></var>
         <var id="senderArea"></var>
         <var id="receiverArea"></var>
@@ -73,98 +74,90 @@
             </svg>
             <img src=".\resources\syndi.jpg" alt="Cologne Map">
         </div>
-    </body>
-    <script>
-        const pricesMap = new Map([["Ehrenfeld::Ehrenfeld", "14€"], ["Ehrenfeld::Deutz", "18.5€"], ["Deutz::Deutz", "14.5€"], ["Deutz::Ehrenfeld", "18.5€"]]);
-        const areaNames = ["Ehrenfeld", "Deutz", "None"];	
-        const senderArea = document.getElementById('senderArea');
-        const receiverArea = document.getElementById('receiverArea');
-        const highlightedArea = document.getElementById('highlightedArea');
-		const originColor = "rgba(255, 233, 127, 0.5)"
-		const destinationColor = "rgba(255, 127, 127, 0.5)"
-		const highlightColor = "rgba(52, 54, 103, 0.5)"
-        senderArea.value = "None";
-        receiverArea.value = "None";
-        highlightedArea.value = "None";	
-        areaNames.forEach((areaName) => {
-        	var area = document.querySelector('.' + areaName);
-        	if (area == null) {
-        		return;
-        	}
-        	area.addEventListener('mouseenter', () => {
-        		console.log("hola");
-        		<!-- highlight area -->
-        		if (senderArea.value == areaName || receiverArea.value == areaName) {
-        			return;
-        		}
-        		area.style.fill = highlightColor;
-				area.style.opacity = 1.0;
-        		highlightedArea.value = areaName;		
-        	});	
-        	area.addEventListener('mouseleave', () => {
-        		if (senderArea.value == areaName || receiverArea.value == areaName) {
-        			return;
-        		}
-        		highlightedArea.value = "None";
-				area.style.opacity = 0.0;
-        	});
-        	area.addEventListener('click', () => {
-        		if (senderArea.value != "None" && receiverArea.value != "None") {
-        			if (receiverArea.value == areaName) {
-        				<!-- unset destination -->
-        				area.style.opacity = 0.0;
-        				receiverArea.value = "None";
-						origin = document.getElementById("table-origin").innerHTML;
-        				document.getElementById("table-destination").innerHTML = origin;
-						document.getElementById("table-price").innerHTML = pricesMap.get(origin + "::" + origin);
+		<script>
+			const pricesMap = new Map([["Ehrenfeld::Ehrenfeld", "14€"], ["Ehrenfeld::Deutz", "18.5€"], ["Deutz::Deutz", "14.5€"], ["Deutz::Ehrenfeld", "18.5€"]]);
+			const areaNames = ["Ehrenfeld", "Deutz", "None"];	
+			const senderArea = document.getElementById('senderArea');
+			const receiverArea = document.getElementById('receiverArea');
+			const highlightedArea = document.getElementById('highlightedArea');
+			const originColor = "rgba(255, 233, 127, 0.5)";
+			const destinationColor = "rgba(255, 127, 127, 0.5)";
+			const highlightColor = "rgba(52, 54, 103, 0.5)";
+			senderArea.value = "None";
+			receiverArea.value = "None";
+			highlightedArea.value = "None";	
+			areaNames.forEach((areaName) => {
+				var area = document.querySelector('.' + areaName);
+				if (area == null) {
+					return;
+				}
+				area.addEventListener('mouseenter', () => {
+					if (senderArea.value == areaName || receiverArea.value == areaName) {
+						return;
+					}
+					area.style.fill = highlightColor;
+					area.style.opacity = 1.0;
+					highlightedArea.value = areaName;		
+				});
+				area.addEventListener('mouseleave', () => {
+					if (senderArea.value == areaName || receiverArea.value == areaName) {
+						return;
+					}
+					highlightedArea.value = "None";
+					area.style.opacity = 0.0;
+				});
+				area.addEventListener('click', () => {
+					if (senderArea.value != "None" && receiverArea.value != "None") {
+						if (receiverArea.value == areaName) {
+							area.style.opacity = 0.0;
+							receiverArea.value = "None";
+							origin = document.getElementById("table-origin").innerHTML;
+							document.getElementById("table-destination").innerHTML = origin;
+							document.getElementById("table-price").innerHTML = pricesMap.get(origin + "::" + origin);
+							document.getElementById("table-destination").style.backgroundColor = originColor;
+							return;
+						};
+						document.querySelector('.' + senderArea.value).style.opacity = 0.0;
+						document.querySelector('.' + receiverArea.value).style.opacity = 0.0;
+						senderArea.value = "None";
+						receiverArea.value = "None";
+						document.getElementById("table-origin").innerHTML = "";
+						document.getElementById("table-destination").innerHTML = "";
+						document.getElementById("table-price").innerHTML = "";	
+						document.getElementById("table-destination").style.backgroundColor = "";
+						document.getElementById("table-origin").style.backgroundColor = "";
+						return;
+					}
+					else if (senderArea.value == areaName) {
+						area.style.opacity = 0.0;
+						senderArea.value = "None";
+						document.getElementById("table-origin").innerHTML = "";
+						document.getElementById("table-origin").style.backgroundColor = "";
+						document.getElementById("table-destination").innerHTML = "";
+						document.getElementById("table-destination").style.backgroundColor = "";
+						document.getElementById("table-price").innerHTML = "";
+						return;
+					} else if (senderArea.value == "None") {
+						area.style.fill = originColor;
+						area.style.opacity = 1.0;
+						senderArea.value = areaName;
+						document.getElementById("table-origin").innerHTML = areaName;
+						document.getElementById("table-origin").style.backgroundColor = originColor;
+						document.getElementById("table-destination").innerHTML = areaName;
 						document.getElementById("table-destination").style.backgroundColor = originColor;
-        				return;
-        			} 
-        			<!-- unset origin and destination -->
-        			document.querySelector('.' + senderArea.value).style.opacity = 0.0;
-        			document.querySelector('.' + receiverArea.value).style.opacity = 0.0;
-        			senderArea.value = "None";
-        			receiverArea.value = "None";
-        			document.getElementById("table-origin").innerHTML = "";
-        			document.getElementById("table-destination").innerHTML = "";
-        			document.getElementById("table-price").innerHTML = "";	
-        			document.getElementById("table-destination").style.backgroundColor = "";
-        			document.getElementById("table-origin").style.backgroundColor = "";
-        			return;
-        		}
-        		else if (senderArea.value == areaName) {
-        			<!-- unset origin -->
-        			area.style.opacity = 0.0;
-        			senderArea.value = "None";
-        			document.getElementById("table-origin").innerHTML = "";
-        			document.getElementById("table-origin").style.backgroundColor = "";
-        			document.getElementById("table-destination").innerHTML = "";
-        			document.getElementById("table-destination").style.backgroundColor = "";
-        			document.getElementById("table-price").innerHTML = "";
-        			return;
-        		}
-        		else if (senderArea.value == "None") {
-        			<!-- set origin -->
-        			area.style.fill = originColor;
-        			area.style.opacity = 1.0;
-        			senderArea.value = areaName;
-        			document.getElementById("table-origin").innerHTML = areaName;
-        			document.getElementById("table-origin").style.backgroundColor = originColor;
-        			document.getElementById("table-destination").innerHTML = areaName;
-        			document.getElementById("table-destination").style.backgroundColor = originColor;
-        			document.getElementById("table-price").innerHTML 
-        				= pricesMap.get(areaName + "::" + areaName);		
-        			return;
-        		}
-        		<!-- set destination -->
-        		area.style.fill = destinationColor;
-        		area.style.opacity = 1.0;
-        		receiverArea.value = areaName;
-        		document.getElementById("table-destination").innerHTML = areaName;
-        		document.getElementById("table-destination").style.backgroundColor = destinationColor;
-        		document.getElementById("table-price").innerHTML
-        			= pricesMap.get(senderArea.value + "::" + areaName);
-        	});
-        });
-    </script>
+						document.getElementById("table-price").innerHTML 
+							= pricesMap.get(areaName + "::" + areaName);		
+						return;
+					}
+					area.style.fill = destinationColor;
+					area.style.opacity = 1.0;
+					receiverArea.value = areaName;
+					document.getElementById("table-destination").innerHTML = areaName;
+					document.getElementById("table-destination").style.backgroundColor = destinationColor;
+					document.getElementById("table-price").innerHTML
+						= pricesMap.get(senderArea.value + "::" + areaName);
+				});
+			});
+		</script>
+    </div>
 </html>
