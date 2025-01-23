@@ -53,7 +53,7 @@
 		</style>
         <table class="price-calculator-table">
             <tr>
-                <th><i>Absender</i></th>
+                <th><i>Aborigin</i></th>
                 <th><i>Empfänger</i></th>
                 <th><i>Preis</i></th>
             </tr>
@@ -64,8 +64,8 @@
             </tr>
         </table>
         <var id="highlightedArea"></var>
-        <var id="senderArea"></var>
-        <var id="receiverArea"></var>
+        <var id="originArea"></var>
+        <var id="destinationArea"></var>
         <div class="cologne-map">
             <svg viewBox="0 0 1000 733">
                 <polygon opacity="0" points="366,422 369,400 374,381 381,366 389,352 397,340 408,328 425,313 478,359 464,372 458,379 451,391 446,405 443,421" class="Ehrenfeld"/>
@@ -77,14 +77,14 @@
 		<script>
 			const pricesMap = new Map([["Ehrenfeld::Ehrenfeld", "14€"], ["Ehrenfeld::Deutz", "18.5€"], ["Deutz::Deutz", "14.5€"], ["Deutz::Ehrenfeld", "18.5€"]]);
 			const areaNames = ["Ehrenfeld", "Deutz", "None"];	
-			const senderArea = document.getElementById('senderArea');
-			const receiverArea = document.getElementById('receiverArea');
+			const originArea = document.getElementById('originArea');
+			const destinationArea = document.getElementById('destinationArea');
 			const highlightedArea = document.getElementById('highlightedArea');
 			const originColor = "rgba(255, 233, 127, 0.5)";
 			const destinationColor = "rgba(255, 127, 127, 0.5)";
 			const highlightColor = "rgba(52, 54, 103, 0.5)";
-			senderArea.value = "None";
-			receiverArea.value = "None";
+			originArea.value = "None";
+			destinationArea.value = "None";
 			highlightedArea.value = "None";	
 			areaNames.forEach((areaName) => {
 				var area = document.querySelector('.' + areaName);
@@ -92,7 +92,7 @@
 					return;
 				}
 				area.addEventListener('mouseenter', () => {
-					if (senderArea.value == areaName || receiverArea.value == areaName) {
+					if (originArea.value == areaName || destinationArea.value == areaName) {
 						return;
 					}
 					area.style.fill = highlightColor;
@@ -100,27 +100,18 @@
 					highlightedArea.value = areaName;		
 				});
 				area.addEventListener('mouseleave', () => {
-					if (senderArea.value == areaName || receiverArea.value == areaName) {
+					if (originArea.value == areaName || destinationArea.value == areaName) {
 						return;
 					}
 					highlightedArea.value = "None";
 					area.style.opacity = 0.0;
 				});
 				area.addEventListener('click', () => {
-					if (senderArea.value != "None" && receiverArea.value != "None") {
-						if (receiverArea.value == areaName) {
-							area.style.opacity = 0.0;
-							receiverArea.value = "None";
-							origin = document.getElementById("table-origin").innerHTML;
-							document.getElementById("table-destination").innerHTML = origin;
-							document.getElementById("table-price").innerHTML = pricesMap.get(origin + "::" + origin);
-							document.getElementById("table-destination").style.backgroundColor = originColor;
-							return;
-						};
-						document.querySelector('.' + senderArea.value).style.opacity = 0.0;
-						document.querySelector('.' + receiverArea.value).style.opacity = 0.0;
-						senderArea.value = "None";
-						receiverArea.value = "None";
+					if (originArea.value != "None" && destinationArea.value != "None") {
+						document.querySelector('.' + originArea.value).style.opacity = 0.0;
+						document.querySelector('.' + destinationArea.value).style.opacity = 0.0;
+						originArea.value = "None";
+						destinationArea.value = "None";
 						document.getElementById("table-origin").innerHTML = "";
 						document.getElementById("table-destination").innerHTML = "";
 						document.getElementById("table-price").innerHTML = "";	
@@ -128,19 +119,19 @@
 						document.getElementById("table-origin").style.backgroundColor = "";
 						return;
 					}
-					else if (senderArea.value == areaName) {
+					else if (originArea.value == areaName) {
 						area.style.opacity = 0.0;
-						senderArea.value = "None";
+						originArea.value = "None";
 						document.getElementById("table-origin").innerHTML = "";
 						document.getElementById("table-origin").style.backgroundColor = "";
 						document.getElementById("table-destination").innerHTML = "";
 						document.getElementById("table-destination").style.backgroundColor = "";
 						document.getElementById("table-price").innerHTML = "";
 						return;
-					} else if (senderArea.value == "None") {
+					} else if (originArea.value == "None") {
 						area.style.fill = originColor;
 						area.style.opacity = 1.0;
-						senderArea.value = areaName;
+						originArea.value = areaName;
 						document.getElementById("table-origin").innerHTML = areaName;
 						document.getElementById("table-origin").style.backgroundColor = originColor;
 						document.getElementById("table-destination").innerHTML = areaName;
@@ -151,11 +142,11 @@
 					}
 					area.style.fill = destinationColor;
 					area.style.opacity = 1.0;
-					receiverArea.value = areaName;
+					destinationArea.value = areaName;
 					document.getElementById("table-destination").innerHTML = areaName;
 					document.getElementById("table-destination").style.backgroundColor = destinationColor;
 					document.getElementById("table-price").innerHTML
-						= pricesMap.get(senderArea.value + "::" + areaName);
+						= pricesMap.get(originArea.value + "::" + areaName);
 				});
 			});
 		</script>
