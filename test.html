@@ -8,7 +8,6 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
-	<script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
     <div class="map-container" style="height: 775px;">	
 		<style>
@@ -28,8 +27,8 @@
 			.price-calculator-table {
 				font-family: "Manrope", sans-serif;
 				background-color: rgb(238,236,239);
-			        font-size: min(4vw, 16px);
-			        color: white;
+				font-size: min(4vw, 16px);
+				color: white;
 				border-collapse: collapse;
 				table-layout: fixed;
 				width: 1000px;
@@ -79,6 +78,7 @@
             </svg>
             <img src="https://alejandrofsevilla.github.io/bike-syndikat/resources/cologne-map.jpg" alt="Cologne Map">
         </div>
+		<script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script>
 			const pricesUrl = "https://alejandrofsevilla.github.io/bike-syndikat/resources/prices.csv";
 		    const pricesMap = new Map();
@@ -92,7 +92,6 @@
 			originArea.value = "None";
 			destinationArea.value = "None";
 			highlightedArea.value = "None";
-			/*load prices table: */
 			$.get(pricesUrl, (data) => {
 				rows = data.split('\n');
 				columnKeys = rows[0].split(',').slice(1);
@@ -105,18 +104,16 @@
 					    if(!pricesMap.has(key)) {
 							pricesMap.set(key, item.trim());
 							pricesMap.set(invertedKey, item.trim());
-						};
+						}
 					});
 				});
 			});
-			/*set mouse events: */
 			areaNames.forEach((areaName) => {
 				var area = document.querySelector('.' + areaName);
 				if (area == null) {
 					return;
 				}
 				area.addEventListener('mouseenter', () => {
-					/*highlight area: */
 					if (originArea.value == areaName || destinationArea.value == areaName) {
 						return;
 					}
@@ -125,7 +122,6 @@
 					highlightedArea.value = areaName;		
 				});
 				area.addEventListener('mouseleave', () => {
-					/*unhighlight area: */
 					if (originArea.value == areaName || destinationArea.value == areaName) {
 						return;
 					}
@@ -134,7 +130,6 @@
 				});
 				area.addEventListener('click', () => {
 					if (originArea.value != "None" && destinationArea.value != "None") {
-						/*unset origin and destination: */
 						document.querySelector('.' + originArea.value).style.opacity = 0.0;
 						document.querySelector('.' + destinationArea.value).style.opacity = 0.0;
 						originArea.value = "None";
@@ -147,7 +142,6 @@
 						return;
 					}
 					else if (originArea.value == areaName) {
-						/*unset origin: */
 						area.style.opacity = 0.0;
 						originArea.value = "None";
 						document.getElementById("table-origin").innerHTML = "";
@@ -157,7 +151,6 @@
 						document.getElementById("table-price").innerHTML = "";
 						return;
 					} else if (originArea.value == "None") {
-						/*set origin: */
 						area.style.fill = originColor;
 						area.style.opacity = 1.0;
 						originArea.value = areaName;
@@ -169,7 +162,6 @@
 							= pricesMap.get(areaName + "::" + areaName);		
 						return;
 					}
-					/*set destination: */
 					area.style.fill = destinationColor;
 					area.style.opacity = 1.0;
 					destinationArea.value = areaName;
