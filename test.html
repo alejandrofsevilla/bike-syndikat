@@ -9,29 +9,31 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
 	</head>
-    <div class="map-container" style="height:775px">	
+    <div class="map-container" style="height: 775px;">	
 		<style>
 			.cologne-map {
 				display: flex;
 				position: absolute;
-				transform: scale(0.9);
-				transform-origin: top left;
+				margin-right: 8px;
 			}
 			.cologne-map img {
 				pointer-events: none;
 				position: top;
+				width: 1000px;
+				max-width: 100%;
 			}
 			.cologne-map svg {
 				position: absolute;
+				width: 1000px;
+				max-width: 100%;
 			}
 			.price-calculator-table {
 				font-family: "Manrope", sans-serif;
 				font-size: 14px;
 				border-collapse: collapse;
 				table-layout: fixed;
-				width: 900px;
-				padding: 0px;
-				position: left;
+				width: 1000px;
+				max-width: 100%;
 			}
 			td, th {
 				border: 3px solid rgb(238,236,239);
@@ -62,7 +64,6 @@
                 <td id="table-price"></td>
             </tr>
         </table>
-        </table>
         <var id="highlightedArea"></var>
         <var id="senderArea"></var>
         <var id="receiverArea"></var>
@@ -72,7 +73,7 @@
                 <polygon opacity="0" points="590,352 609,363 620,373 632,387 639,400 643,414 645,430 643,449 638,463 630,476 621,487 609,497 594,506 576,513 587,357" class="Deutz"/>
                 <polygon opacity="0" points="528,188 529,88 555,90 579,95 602,101 626,109 645,118 666,129 643,213 622,204 599,197 576,192 544,188" class="merkenich"/>
             </svg>
-            <img src=".\resources\syndi.jpg" alt="Cologne Map">
+            <img src=".\resources\cologne-map.jpg" alt="Cologne Map">
         </div>
 		<script>
 			const pricesMap = new Map([["Ehrenfeld::Ehrenfeld", "14€"], ["Ehrenfeld::Deutz", "18.5€"], ["Deutz::Deutz", "14.5€"], ["Deutz::Ehrenfeld", "18.5€"]]);
