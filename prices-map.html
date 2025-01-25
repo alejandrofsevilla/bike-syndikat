@@ -94,10 +94,10 @@
 				items.slice(1).forEach((item, colNum, items) => {
 					key = rowName.trim() + columnKeys[colNum].trim();
 					invertedKey = columnKeys[colNum].trim() + rowName.trim();
-					if(!pricesMap.has(key)) {
+					if (pricesMap.has(invertedKey)) {
+						pricesMap.set(key, pricesMap.get(invertedKey));
+					} else {
 						pricesMap.set(key, item.trim());
-						pricesMap.set(invertedKey, item.trim());
-						console.log(key + ":" + item.trim());
 					}
 				});
 			});
