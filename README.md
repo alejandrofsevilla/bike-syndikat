@@ -1,1 +1,3 @@
-# syndi-map-update
+# bike-syndikat
+
+https://www.bikesyndikat.de/
