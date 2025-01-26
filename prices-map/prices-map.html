@@ -1,223 +1,227 @@
-<div style="height: 775px;">	
-	<style>
-		.prices-map {
-			user-select: none;
-			position: absolute;
-			display: flex;
-		}
-		.prices-map img {
-			max-width: 100%;
-			width: 1000px;
-		}
-		.prices-map svg {
-			position: absolute;
-		}
-		.price-calculator-table {
-			user-select: none;
-			max-width: 100%;
-			width: 1000px;
-			background-color: rgb(238,236,239);
-			border-collapse: collapse;
-			font-family: "Manrope", sans-serif;
-			font-style: normal;
-			font-size: min(4vw, 16px);
-			table-layout: fixed;
-			text-align: left;
-			color: white;
-		}
-		td, th {
-			border: 3px solid rgb(238,236,239);
-			background-color: rgba(7, 25, 76, 0.5);
-			border-radius:10px;
-			padding-left: 10px;
-			height: 38px;
-		}
-		td:nth-child(2), td:nth-child(3){
-			color: black;
-		}
-		td:nth-child(1) {
-			text-align: center;
-			background-color: rgba(7, 25, 76, 1.0);
-		}
-		td:nth-child(4){
-			font-weight: bold;
-		}
-	</style>
-	<table class="price-calculator-table">
-		<tr>
-			<th>Fahrradtype</th>
-			<th>Absender</th>
-			<th>Empfänger</th>
-			<th>Preis</th>
-		</tr>
-		<tr>
-			<td id="table-bike-type">Bike</td>
-			<td id="table-origin"></td>
-			<td id="table-destination"></td>
-			<td id="table-price"></td>
-		</tr>
-	</table>
-	<var id="highlightedArea"></var>
-	<var id="originArea"></var>
-	<var id="destinationArea"></var>
-	<div class="prices-map">
-		<svg viewBox="0 0 1000 733">
-			<polygon opacity="0" points="366,422 369,400 374,381 381,366 389,352 397,340 408,328 425,313 478,359 464,372 458,379 451,391 446,405 443,421" class="Ehrenfeld"/>
-			<polygon opacity="0" points="590,352 609,363 620,373 632,387 639,400 643,414 645,430 643,449 638,463 630,476 621,487 609,497 594,506 576,513 587,357" class="Deutz"/>
-			<polygon opacity="0" points="291,422 292,401 295,378 302,350 311,328 321,309 332,293 346,276 361,260 418,308 405,319 395,330 386,340 379,351 372,365 364,383 359,405 358,421" class="Braunsfeld"/>
-			<polygon opacity="0" points="208,422 207,383 208,361 212,338 217,316 226,289 237,264 248,242 263,219 275,203 285,191 355,253 336,273 326,286 318, 298 309,313 302,327 295,344 290,359 299,344 290,359 286,375 284,391 283,404 282,422" class="Ossendorf"/>
-			<polygon opacity="0" points="209,431 212,457 220,489 228,514 242,545 260,574 293,616 321,641 343,657 366,671 408,615 388,603 368,588 349,571 332,553 315,530 304,511 288,466 284,444 283,431" class="Junkersdorf"/>
-			<polygon opacity="0" points="292,431 295,455 302,481 312,505 326,530 341,550 357,567 374,583 393,596 414,608 448,564 430,553 416,543 404,532 393,521 383,508 375,494 368,480 363,466 359,451 358,440 358,431" class="Lindenthal"/>
-			<polygon opacity="0" points="366,431 368,446 373,466 381,487 394,508 407,523 421,535 435,545 453,556 489,509 476,500 466,491 458,481 452,472 448,463 445,454 443,442 442,430" class="Sulz"/>
-			<polygon opacity="0" points="423,613 457,567 474,574 488,578 503,581 517,583 552,583 569,581 585,577 594,621 594,627 574,631 552,635 536,635 513,635 495,633 476,630 463,627 442,620" class="Marienburg"/>
-			<polygon opacity="0" points="" class="Rodenkirchen"/>
-			<polygon opacity="0" points="" class="Kalk"/>
-			<polygon opacity="0" points="" class="Bayenthal"/>
-			<polygon opacity="0" points="" class="Nippes1"/>
-			<polygon opacity="0" points="" class="Nippes2"/>
-			<polygon opacity="0" points="" class="InnenS"/>
-			<polygon opacity="0" points="" class="InnenN"/>
-			<polygon opacity="0" points="" class="Niehl"/>
-			<polygon opacity="0" points="" class="Mullheim"/>
-		</svg>
-		<img src="https://alejandrofsevilla.github.io/bike-syndikat/prices-map/cologne-map.jpg" alt="Cologne Map">
-	</div>
-	<script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script id="load-prices-data">
-		const pricesUrl = "https://alejandrofsevilla.github.io/bike-syndikat/prices-map/prices.csv";
-		const pricesMap = new Map();
-		$.get(pricesUrl, (data) => {
-			rows = data.split('\n');
-			columnKeys = rows[0].split(',').slice(1);
-			rows.slice(1).forEach((row, rowNum) => {
-				items = row.split(',');
-				rowName = items[0];
-				items.slice(1).forEach((item, colNum, items) => {
-					key = rowName.trim() + columnKeys[colNum].trim();
-					invertedKey = columnKeys[colNum].trim() + rowName.trim();
-					if (pricesMap.has(invertedKey)) {
-						pricesMap.set(key, pricesMap.get(invertedKey));
-					} else {
-						pricesMap.set(key, item.trim());
-					}
-				});
-			});
-		});
-	</script>
-	<script id="update-price-on-table">
-		function updatePriceOnTable() {
-			price = document.getElementById("table-price");
-			origin = document.getElementById("table-origin").innerHTML;
-			destination = document.getElementById("table-destination").innerHTML;
-			if (destination == "") {
-				price.innerHTML = "";
-				return;
-			}				
-			lastradExtraCost = "";
-			if (bikeType.innerHTML == "Lastrad") {
-				lastradExtraCost = " + Lastradkosten";
-			}
-			price.innerHTML = pricesMap.get(origin + destination) + "€" + lastradExtraCost;
-		};
-	</script>
-	<script id="add-prices-table-events">
-		const bikeType = document.getElementById("table-bike-type");
-		const buttonColor = "rgba(7, 25, 76, 1.0)";
-		const hoveredButtonColor = "rgba(7, 25, 76, 0.75)";
-		bikeType.addEventListener('mouseenter', () => {
-			bikeType.style.backgroundColor = hoveredButtonColor;
-		});
-		bikeType.addEventListener('mouseleave', () => {
-			bikeType.style.backgroundColor = "";
-		});
-		bikeType.addEventListener('mousedown', () => {
-			bikeType.style.color = buttonColor;
-		});
-		bikeType.addEventListener('mouseup', () => {
-			bikeType.style.color = "";
-			switch(bikeType.innerHTML) {
-				case "Bike":
-					bikeType.innerHTML = "Lastrad";
-					updatePriceOnTable();
-					return;
-				case "Lastrad":
-					bikeType.innerHTML = "Bike";
-					updatePriceOnTable();
-					return;
-			}
-		});
-	</script>
-	<script id="add-prices-map-events">
-		const areaNames = ["Ehrenfeld", "Deutz", "Ossendorf", "Junkersdorf", "Braunsfeld", "Lindenthal", "Sulz", "Marienburg", "None"];	
-		const originArea = document.getElementById('originArea');
-		const destinationArea = document.getElementById('destinationArea');
-		const highlightedArea = document.getElementById('highlightedArea');
-		const originColor = "rgba(255, 233, 127, 0.5)";
-		const destinationColor = "rgba(255, 127, 127, 0.5)";
-		const highlightColor = "rgba(7, 25, 76, 0.5)";
-		originArea.value = "None";
-		destinationArea.value = "None";
-		highlightedArea.value = "None";
-		areaNames.forEach((areaName) => {
-			var area = document.querySelector('.' + areaName);
-			if (area == null) {
-				return;
-			}
-			area.addEventListener('mouseenter', () => {
-				if (originArea.value == areaName || destinationArea.value == areaName) {
-					return;
-				}
-				area.style.fill = highlightColor;
-				area.style.opacity = 1.0;
-				highlightedArea.value = areaName;		
-			});
-			area.addEventListener('mouseleave', () => {
-				if (originArea.value == areaName || destinationArea.value == areaName) {
-					return;
-				}
-				highlightedArea.value = "None";
-				area.style.opacity = 0.0;
-			});
-			area.addEventListener('click', () => {
-				if (originArea.value != "None" && destinationArea.value != "None") {
-					document.querySelector('.' + originArea.value).style.opacity = 0.0;
-					document.querySelector('.' + destinationArea.value).style.opacity = 0.0;
-					originArea.value = "None";
-					destinationArea.value = "None";
-					document.getElementById("table-origin").innerHTML = "";
-					document.getElementById("table-destination").innerHTML = "";
-					document.getElementById("table-destination").style.backgroundColor = "";
-					document.getElementById("table-origin").style.backgroundColor = "";
-					updatePriceOnTable();
-					return;
-				}
-				else if (originArea.value == areaName) {
-					area.style.opacity = 0.0;
-					originArea.value = "None";
-					document.getElementById("table-origin").innerHTML = "";
-					document.getElementById("table-origin").style.backgroundColor = "";
-					document.getElementById("table-destination").innerHTML = "";
-					document.getElementById("table-destination").style.backgroundColor = "";
-					updatePriceOnTable();
-					return;
-				} else if (originArea.value == "None") {
-					area.style.opacity = 1.0;
-					area.style.fill = originColor;
-					originArea.value = areaName;
-					document.getElementById("table-origin").innerHTML = areaName;
-					document.getElementById("table-origin").style.backgroundColor = originColor;
-					document.getElementById("table-destination").innerHTML = areaName;
-					document.getElementById("table-destination").style.backgroundColor = originColor;
-					updatePriceOnTable();	
-					return;
-				}
-				area.style.opacity = 1.0;
-				area.style.fill = destinationColor;
-				destinationArea.value = areaName;
-				document.getElementById("table-destination").innerHTML = areaName;
-				document.getElementById("table-destination").style.backgroundColor = destinationColor;
-				updatePriceOnTable();
-			});
-		});
-	</script>
+<div style="height: 775px;">
+    <style>
+        .prices-map {
+        user-select: none;
+        position: absolute;
+        display: flex;
+        }
+        .prices-map img {
+        max-width: 100%;
+        width: 1000px;
+        user-select: none;
+        }
+        .prices-map svg {
+        position: absolute;
+        }
+        .prices-map-table {
+        user-select: none;
+        max-width: 100%;
+        width: 1000px;
+        border-collapse: collapse;
+        background-color: rgb(238,236,239);
+        font-family: "Manrope", sans-serif;
+        font-style: normal;
+        font-size: min(4vw, 16px);
+        table-layout: fixed;
+        text-align: center;
+        color: rgb(7, 25, 76);
+        }
+        td, th {
+        border: 5px solid rgb(238,236,239);
+        background-color: white;
+        border-radius:15px;
+        height: 38px;
+        }
+        td:nth-child(1) {
+        background-color: rgb(7, 25, 76);
+        color: white;
+        }
+        td:nth-child(4){
+        font-weight: bold;
+        }
+    </style>
+    <table class="prices-map-table">
+        <tr>
+            <th>Fahrradtype</th>
+            <th>Absender</th>
+            <th>Empfänger</th>
+            <th>Preis</th>
+        </tr>
+        <tr>
+            <td id="table-bike-type">Bike</td>
+            <td id="table-origin"></td>
+            <td id="table-destination"></td>
+            <td id="table-price"></td>
+        </tr>
+    </table>
+    <var id="highlightedArea"></var>
+    <var id="originArea"></var>
+    <var id="destinationArea"></var>
+    <div class="prices-map">
+        <svg viewBox="0 0 1000 733">
+            <polygon opacity="0" points="568,429 562,516 537,516 522,514 506,508 491,500 476,488 464,474 457,459 453,445 452,430" class="InnenS"/>
+            <polygon opacity="0" points="453,421 454,410 461,393 471,377 484,365 499,356 515,349 531,345 547,344 561,345 576,347 573,351 569,420" class="InnenN"/>
+            <polygon opacity="0" points="462,560 497,513 512,520 523,523 537,525 558,525 564,524 582,569 556,574 538,574 516,574 495,571 477,566" class="Bayenthal"/>
+            <polygon opacity="0" points="366,422 369,400 374,381 381,366 389,352 397,340 408,328 425,313 478,359 464,372 458,379 451,391 446,405 443,421" class="Ehrenfeld"/>
+            <polygon opacity="0" points="590,352 609,363 620,373 632,387 639,400 643,414 645,430 643,449 638,463 630,476 621,487 609,497 594,506 576,513 587,357" class="Deutz"/>
+            <polygon opacity="0" points="526,269 527,196 548,197 568,199 590,203 608,209 625,215 640,221 628,268 615,287 599,280 583,275 566,272 551,270 537,269 526,269" class="Niehl"/>
+            <polygon opacity="0" points="484,354 432,308 453,297 475,287 497,282 519,278 547,278 572,281 593,287 611,294 581,340 565,336 551,335 536,335 520,338 504,344 493,348 484,354" class="Nippes1"/>
+            <polygon opacity="0" points="366,431 368,446 372,466 381,487 394,508 407,523 421,536 435,546 453,556 489,509 476,500 466,491 458,481 452,472 448,463 445,454 443,442 442,430" class="Sulz"/>
+            <polygon opacity="0" points="426,303 370,253 384,241 397,233 410,226 423,219 439,212 454,207 475,202 490,199 504,197 517,196 516,270 497,272 477,278 457,285 441,293 426,303" class="Nippes2"/>
+            <polygon opacity="0" points="292,422 291,401 295,378 302,350 311,328 321,309 332,293 346,276 361,260 418,308 405,319 395,330 386,340 379,351 372,365 364,383 359,405 358,421" class="Braunsfeld"/>
+            <polygon opacity="0" points="423,613 457,567 474,574 488,578 503,581 517,583 552,583 569,581 585,577 594,621 594,627 574,631 552,635 536,635 513,635 495,633 476,630 463,627 442,620" class="Marienburg"/>
+            <polygon opacity="0" points="417,619 437,628 459,635 479,640 500,643 520,644 545,644 565,642 593,636 585,700 559,705 533,708 513,709 490,708 464,705 436,699 413,692 394,685 374,676" class="Rodenkirchen"/>
+            <polygon opacity="0" points="208,431 212,457 220,489 228,514 242,545 260,574 293,616 321,641 343,657 366,671 408,615 388,603 368,588 349,571 332,553 315,530 304,511 288,466 284,444 283,431" class="Junkersdorf"/>
+            <polygon opacity="0" points="292,431 295,455 302,481 312,505 326,530 341,550 357,567 374,583 393,596 414,608 448,564 430,553 416,543 404,532 393,521 383,508 375,494 368,480 363,466 359,451 358,440 358,431" class="Lindenthal"/>
+            <polygon opacity="0" points="208,422 207,412 207,383 208,361 212,338 217,316 226,289 237,264 248,242 263,219 275,203 285,191 355,253 336,273 326,286 318, 298 309,313 302,327 295,344 290,359 299,344 290,359 286,375 284,391 283,404 282,422" class="Ossendorf"/>
+            <polygon opacity="0" points="594,344 640,274 643,263 662,280 678,298 691,316 703,336 713,357 720,382 724,406 726,430 724,455 720,478 713,500 704,521 692,542 680,559 666,575 648,592 626,609 608,619 599,576 578,521 593,516 604,511 619,501 632,487 641,474 648,460 653,442 653,423 650,405 643,390 634,376 622,363 608,352" class="Kalk"/>
+            <polygon opacity="0" points="646,254 677,137 698,151 718,168 739,190 758,213 774,237 787,261 800,291 810,323 816,358 818,386 818,411 816,438 810,473 800,506 785,540 769,568 753,591 733,613 711,635 686,654 659,671 630,685 599,697 607,630 629,618 648,604 664,589 682,571 698,549 711,527 720,507 728,483 732,464 734,439 734,416 732,395 727,373 718,347 708,326 694,304 678,285 660,267" class="Mullheim"/>
+        </svg>
+        <img src="./resources/cologne-map.jpg" alt="Cologne Map">
+    </div>
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        const pricesUrl = "https://alejandrofsevilla.github.io/bike-syndikat/prices-map/prices.csv";
+        const pricesMap = new Map();
+        $.get(pricesUrl, (data) => {
+        	rows = data.split('\n');
+        	columnKeys = rows[0].split(',').slice(1);
+        	rows.slice(1).forEach((row, rowNum) => {
+        		items = row.split(',');
+        		rowName = items[0].trim();
+        		areaNames.push(rowName);
+        		items.slice(1).forEach((item, colNum, items) => {
+        			key = rowName + columnKeys[colNum].trim();
+        			invertedKey = columnKeys[colNum].trim() + rowName;
+        			if (pricesMap.has(invertedKey)) {
+        				pricesMap.set(key, pricesMap.get(invertedKey));
+        			} else {
+        				pricesMap.set(key, item.trim());
+        			}
+        		});
+        	});
+        });
+    </script>
+    <script>
+        function updatePriceOnTable() {
+        	price = document.getElementById("table-price");
+        	origin = document.getElementById("table-origin").innerHTML;
+        	destination = document.getElementById("table-destination").innerHTML;
+        	if (destination == "") {
+        		price.innerHTML = "";
+        		return;
+        	}				
+        	lastradExtraCost = "";
+        	if (bikeType.innerHTML == "Lastrad") {
+        		lastradExtraCost = " + Lastradkosten";
+        	}
+        	price.innerHTML = pricesMap.get(origin + destination) + "€" + lastradExtraCost;
+        };
+    </script>
+    <script>
+        const bikeType = document.getElementById("table-bike-type");
+        const buttonColor = "rgba(7, 25, 76, 1.0)";
+        const hoveredButtonColor = "rgba(7, 25, 76, 0.75)";
+        bikeType.addEventListener('mouseenter', () => {
+        	bikeType.style.backgroundColor = hoveredButtonColor;
+        });
+        bikeType.addEventListener('mouseleave', () => {
+        	bikeType.style.backgroundColor = "";
+        });
+        bikeType.addEventListener('mousedown', () => {
+        	bikeType.style.color = buttonColor;
+        });
+        bikeType.addEventListener('mouseup', () => {
+        	bikeType.style.color = "";
+        	switch(bikeType.innerHTML) {
+        		case "Bike":
+        			bikeType.innerHTML = "Lastrad";
+        			updatePriceOnTable();
+        			return;
+        		case "Lastrad":
+        			bikeType.innerHTML = "Bike";
+        			updatePriceOnTable();
+        			return;
+        	}
+        });
+    </script>
+    <script>
+        const areaNames = ["InnenN", "InnenS", "Ehrenfeld", "Braunsfeld", "Kalk", "Sulz", "Mullheim",
+        	"Rodenkirchen", "Marienburg", "Bayenthal", "Deutz", "Niehl", "Nippes1", "Nippes2", "Lindenthal", "Junkersdorf", "Ossendorf", "None"];
+        const originArea = document.getElementById('originArea');
+        const destinationArea = document.getElementById('destinationArea');
+        const highlightedArea = document.getElementById('highlightedArea');
+		const originTableCell = document.getElementById("table-origin");
+		const destinationTableCell = document.getElementById("table-destination");
+        const originColor = "rgba(255, 233, 127, 0.5)";
+        const destinationColor = "rgba(255, 127, 127, 0.5)";
+        const highlightColor = "rgba(7, 25, 76, 0.5)";
+        originArea.value = "None";
+        destinationArea.value = "None";
+        highlightedArea.value = "None";
+        areaNames.forEach((areaName) => {
+        	var area = document.querySelector('.' + areaName);
+        	if (area == null) {
+        		return;
+        	}
+        	area.addEventListener('mouseenter', () => {
+        		if (destinationArea.value != "None") {
+        			return;
+        		}
+        		if (originArea.value == areaName || destinationArea.value == areaName) {
+        			return;
+        		}
+        		area.style.fill = highlightColor;
+        		area.style.opacity = 1.0;
+        		highlightedArea.value = areaName;		
+        	});
+        	area.addEventListener('mouseleave', () => {
+        		if (originArea.value == areaName || destinationArea.value == areaName) {
+        			return;
+        		}
+        		highlightedArea.value = "None";
+        		area.style.opacity = 0.0;
+        	});
+        	area.addEventListener('click', () => {
+        		if (originArea.value != "None" && destinationArea.value != "None") {
+        			document.querySelector('.' + originArea.value).style.opacity = 0.0;
+        			document.querySelector('.' + destinationArea.value).style.opacity = 0.0;
+        			originArea.value = "None";
+        			destinationArea.value = "None";
+        			originTableCell.innerHTML = "";
+        			destinationTableCell.innerHTML = "";
+        			destinationTableCell.style.backgroundColor = "";
+        			originTableCell.style.backgroundColor = "";
+        			updatePriceOnTable();
+        			return;
+        		}
+        		else if (originArea.value == areaName) {
+        			area.style.opacity = 0.0;
+        			originArea.value = "None";
+        			originTableCell.innerHTML = "";
+        			originTableCell.style.backgroundColor = "";
+        			destinationTableCell.innerHTML = "";
+        			destinationTableCell.style.backgroundColor = "";
+        			updatePriceOnTable();
+        			return;
+        		} else if (originArea.value == "None") {
+        			area.style.opacity = 1.0;
+        			area.style.fill = originColor;
+        			originArea.value = areaName;
+        			originTableCell.innerHTML = areaName;
+        			originTableCell.style.backgroundColor = originColor;
+        			destinationTableCell.innerHTML = areaName;
+        			destinationTableCell.style.backgroundColor = originColor;
+        			updatePriceOnTable();	
+        			return;
+        		}
+        		area.style.opacity = 1.0;
+        		area.style.fill = destinationColor;
+        		destinationArea.value = areaName;
+        		destinationTableCell.innerHTML = areaName;
+        		destinationTableCell.style.backgroundColor = destinationColor;
+        		updatePriceOnTable();
+        	});
+        });
+    </script>
 </div>
