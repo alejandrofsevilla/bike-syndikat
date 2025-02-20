@@ -65,24 +65,24 @@
 	</div>
 	<table class="prices-map-table">
 		<tr>
-			<th>von</th>
+			<th>Von</th>
 			<td id="table-origin"></td>
-			<th>bis</th>
+			<th>nach</th>
 			<td id="table-destination"></td>
 			<td id="table-price">+0€</td>
 		</tr>
 		<tr>
 			<th>Fahrzeugtyp</th>
-			<td id="pkw">PKW</td>
-			<td id="lastrad">Lastrad</td>
 			<td id="fahrrad">Fahrrad</td>
+			<td id="lastrad">Lastrad</td>
+			<td id="pkw">PKW</td>
 			<td id="vehicule-price"></td>
 		</tr>
 		<tr>
 			<th>Empfangsbestätigung</th>
 			<th></th>
-			<td id="empfangsbestätigung">✔</td>
 			<td id="no-empfangsbestätigung">✘</td>
+			<td id="empfangsbestätigung">✔</td>
 			<td id="receipt-price"></td>
 		</tr>
 	</table>
@@ -114,7 +114,7 @@
 	const originColor = "rgba(7, 25, 76, 0.50)";
 	const destinationColor = "rgba(7, 25, 76, 0.50)";
 	const destinationTableColor = "rgba(7, 25, 76, 1.0)";
-	const highlightColor = "rgba(0, 0, 0, 0.25)";
+	const highlightColor = "rgba(7, 25, 76, 0.25)";
 	</script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script>
@@ -137,6 +137,7 @@
 	function addExtraCostEvents(buttons, selectedButton, defaultButton, selectedPrice) {
 		var selectedPrice = document.getElementById(selectedPrice);
 		selectedButton.addEventListener('change', () => {
+			console.log(selectedButton.value);
 			buttons.forEach((type) => {
 				var element = document.getElementById(type);
 				if(type != selectedButton.value) {
