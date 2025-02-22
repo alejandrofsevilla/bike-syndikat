@@ -32,10 +32,6 @@
 		height: 30px;
 		background-color: white;
 	}
-	tr:nth-child(5) td:nth-child(5) {
-		font-weight: bold;
-		border: 1px solid white;
-	}
 	</style>
 	<var id="highlightedArea"></var>
 	<var id="originArea"></var>
@@ -94,7 +90,7 @@
 			<th></th>
 			<th></th>
 			<th>G︎esamt</th>
-			<td id="total-price" style="font-weight:bold"></td>
+			<td id="total-price" style="font-weight:bold; border: 1px solid white"></td>
 		</tr>
 	</table>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -131,7 +127,7 @@
 	function resetButton(button) {
 		button.style.backgroundColor = "white";
 		button.style.color = SelectedButtonColor;
-		button.style.border = "none";
+		button.style.border = "1px solid white";
 	}
 	</script>
 	<script>
