@@ -13,7 +13,7 @@
 		top: 650px;
 		width: min(95vw, 900px);
 		font-family: "Manrope", sans-serif;
-		font-size: min(3vw, 16px);
+		font-size: min(2.75vw, 16px);
 		table-layout: fixed;
 		border-collapse: separate;
 		border-spacing: 5 5;
@@ -70,7 +70,7 @@
 			<td id="table-origin"></td>
 			<th>nach</th>
 			<td id="table-destination"></td>
-			<td id="table-price">+0€</td>
+			<td id="table-price"></td>
 		</tr>
 		<tr>
 			<th>Fahrzeugtyp</th>
@@ -93,18 +93,17 @@
 			<th></th>
 			<th></th>
 			<th>G︎esamt</th>
-			<td id="total-price" style="font-weight:bold">0€</td>
+			<td id="total-price" style="font-weight:bold"></td>
 		</tr>
 	</table>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script>
 	const areaNames = ["InnenN", "InnenS", "Ehrenfeld", "Braunsfeld", "Kalk", "Sülz", "Müllheim", "Rodenkirchen", "Marienburg", "Bayenthal", "Deutz", "Niehl", "Nippes1", "Nippes2", "Lindenthal", "Junkersdorf", "Ossendorf", "None"];
+	const vehiculeNames = ["fahrrad", "lastrad", "pkw"];
+	const receiptNames = ["no-empfangsbestätigung", "empfangsbestätigung"];
 	const pricesUrl = "https://alejandrofsevilla.github.io/bike-syndikat/prices-map/prices.csv";
 	const extrasUrl = "https://alejandrofsevilla.github.io/bike-syndikat/prices-map/extras.csv";
-	const buttonColor = "rgba(7, 25, 76, 1.0)";
-	const hoveredButtonColor = "rgba(255, 255, 255, 0.75)";
-	const vehiculeTypes = ["fahrrad", "lastrad", "pkw"];
 	const vehicule = document.getElementById('vehicule');
-	const reciptTypes = ["no-empfangsbestätigung", "empfangsbestätigung"];
 	const receipt = document.getElementById('receipt');
 	const extraPrice = document.getElementById('extra-price');
 	const originArea = document.getElementById('originArea');
@@ -112,12 +111,28 @@
 	const highlightedArea = document.getElementById('highlightedArea');
 	const originTableCell = document.getElementById("table-origin");
 	const destinationTableCell = document.getElementById("table-destination");
-	const originColor = "rgba(7, 25, 76, 0.50)";
-	const destinationColor = "rgba(192, 0, 0, 0.50)";
-	const destinationTableColor = "rgba(7, 25, 76, 1.0)";
+	const SelectedButtonColor = "rgba(7, 25, 76, 1.0)";
+	const hoveredSelectedButtonColor = "rgba(255, 255, 255, 0.75)";
+	const originColor = "rgba(7, 25, 76, 0.40)";
+	const destinationColor = "rgba(192, 0, 0, 0.40)";
 	const highlightColor = "rgba(7, 25, 76, 0.25)";
 	</script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script>
+	function markButtonAsSelected(button) {
+		button.style.backgroundColor = SelectedButtonColor;
+		button.style.color = "white";
+		button.style.border = "1px solid white";
+	}
+	function markButtonAsHovered(button) {
+		button.style.backgroundColor = hoveredSelectedButtonColor;
+		button.style.border = "none";
+	}
+	function resetButton(button) {
+		button.style.backgroundColor = "white";
+		button.style.color = SelectedButtonColor;
+		button.style.border = "none";
+	}
+	</script>
 	<script>
 	function updatePriceOnTable() {
 		price = document.getElementById("table-price");
@@ -127,49 +142,50 @@
 		if(destination == "") {
 			price.innerHTML = "";
 			totalPrice.innerHTML = "";
+			resetButton(price);
+			resetButton(totalPrice);
 			return;
 		}
 		extra = Number(extrasMap.get(receipt.value) || 0) + Number(extrasMap.get(vehicule.value) || 0);
 		price.innerHTML = pricesMap.get(origin + destination) + "€";
 		totalPrice.innerHTML = (Number(pricesMap.get(origin + destination)) + extra).toString() + "€";
+		markButtonAsSelected(totalPrice);
+		markButtonAsSelected(price);
 	};
 	</script>
 	<script>
 	function addExtraCostEvents(buttons, selectedButton, defaultButton, selectedPrice) {
 		var selectedPrice = document.getElementById(selectedPrice);
+		markButtonAsSelected(selectedPrice);
 		selectedButton.addEventListener('change', () => {
 			console.log(selectedButton.value);
-			buttons.forEach((type) => {
-				var element = document.getElementById(type);
-				if(type != selectedButton.value) {
-					element.style.background = "white";
-					element.style.color = buttonColor;
-					element.style.border = "none";
+			buttons.forEach((name) => {
+				var button = document.getElementById(name);
+				if(name != selectedButton.value) {
+					resetButton(button);
 				} else {
-					element.style.backgroundColor = buttonColor;
-					element.style.color = "white";
-					element.style.border = "1px solid white";
+					markButtonAsSelected(button);
 				}
 				selectedPrice.innerHTML = "+" + (extrasMap.get(selectedButton.value) || 0) + "€";
 				updatePriceOnTable();
 			});
 		});
-		buttons.forEach((type) => {
-			var element = document.getElementById(type);
-			element.addEventListener('mouseenter', () => {
-				if(selectedButton.value == type) {
+		buttons.forEach((name) => {
+			var button = document.getElementById(name);
+			button.addEventListener('mouseenter', () => {
+				if(selectedButton.value == name) {
 					return;
 				}
-				element.style.backgroundColor = hoveredButtonColor;
+				markButtonAsHovered(button);
 			});
-			element.addEventListener('mouseleave', () => {
-				if(selectedButton.value == type) {
+			button.addEventListener('mouseleave', () => {
+				if(selectedButton.value == name) {
 					return;
 				}
-				element.style.backgroundColor = "";
+				resetButton(button);
 			});
-			element.addEventListener('mousedown', () => {
-				selectedButton.value = type;
+			button.addEventListener('mousedown', () => {
+				selectedButton.value = name;
 				selectedButton.dispatchEvent(new Event('change'));
 			});
 			selectedButton.value = defaultButton;
@@ -208,8 +224,8 @@
 				extrasMap.set(items[0].trim(), items[1].trim());
 			}
 		});
-		addExtraCostEvents(reciptTypes, receipt, "no-empfangsbestätigung", "receipt-price");
-		addExtraCostEvents(vehiculeTypes, vehicule, "fahrrad", "vehicule-price");
+		addExtraCostEvents(receiptNames, receipt, receiptNames[0], "receipt-price");
+		addExtraCostEvents(vehiculeNames, vehicule, vehiculeNames[0], "vehicule-price");
 	});
 	</script>
 	<script>
@@ -228,8 +244,8 @@
 			if(originArea.value == areaName || destinationArea.value == areaName) {
 				return;
 			}
-			area.style.fill = highlightColor;
 			area.style.opacity = 1.0;
+			area.style.fill = highlightColor;
 			highlightedArea.value = areaName;
 		});
 		area.addEventListener('mouseleave', () => {
@@ -265,13 +281,9 @@
 				area.style.fill = originColor;
 				originArea.value = areaName;
 				originTableCell.innerHTML = areaName;
-				originTableCell.style.backgroundColor = buttonColor;
-				originTableCell.style.color = "white";
-				originTableCell.style.border = "1px solid white";
+				markButtonAsSelected(originTableCell);
 				destinationTableCell.innerHTML = areaName;
-				destinationTableCell.style.color = "white";
-				destinationTableCell.style.backgroundColor = buttonColor;
-				destinationTableCell.style.border = "1px solid white";
+				markButtonAsSelected(destinationTableCell);
 				updatePriceOnTable();
 				return;
 			}
